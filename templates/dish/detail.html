@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<!-- card to show dish and restaurant details-->
+<div class="row">
+  <div class="col-sm-12 col-md-12 col-lg-8 offset-lg-2 mb-4">
+    <div class="card">
+
+      <div class="card-header">
+        <h4 class="my-2 text-body-secondary">
+          <a style="text-decoration:none;" href="{% url 'restaurant:list' dish.restaurant_id %}">
+            {{ dish.restaurant.name }}<small>#{{ dish.restaurant.res_id }}</small>
+          </a>
+        </h4>
+      </div>
+
+      <div class="card-body">
+        <h3 class="card-title pb-3">{{ dish.name }} <small>@ ₹{{ dish.price }} </small></h3>
+        <p class="card-text">
+          Grab it now at <a href="{{ dish.restaurant.get_google_maps_url }}" target="_blank">
+            {{ dish.restaurant.address }}</a>!
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-md-12 col-lg-6 offset-lg-3">
+    <h4 class="text-center">
+      More dishes from 
+      <a style="text-decoration: none;" href="{% url 'restaurant:list' dish.restaurant_id %}">{{ dish.restaurant.name }}</a>
+    </h4>
+  </div>
+
+  <div class="col-sm-12 col-md-12 col-lg-6 offset-lg-3">
+    <div class="list-group">
+      {% for dish in dish.get_other_restaurant_dishes %}
+        <div href="{% url 'dish:detail' dish.pk %}" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">
+              <a style="text-decoration: none;" href="{{ dish.get_absolute_url }}">{{ dish.name }}</a>
+            </h5>
+            <small class="text-body-secondary">
+              <span class="badge {% if dish.restaurant.online %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+                {% if dish.restaurant.online %}online{% else %}unavailable{% endif %}
+              </span>
+            </small>
+          </div>
+          <p class="mb-1">
+            By <a style="text-decoration: none;" href="{% url 'restaurant:list' dish.restaurant_id %}">{{ dish.restaurant.name }}</a>
+          </p>
+          <small class="text-body-secondary">₹{{ dish.price }} {% if dish.onwards_tag %}+{% endif %} </small>
+        </div>
+      {% empty %}
+        <div class="list-group-item">
+          <p class="my-2 text-center">
+            No more dishes from this restaurant.
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock body %}

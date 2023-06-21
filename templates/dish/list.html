@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load paginator_tags %}
+{% load range_tags %}
+{% block body %}
+
+<div class="row">
+
+  {% if not restaurant %}
+    <div class="col-sm-12 col-md-12 col-lg-4 offset-lg-4">
+      <form class="mb-4 pb-3" method="get" action="{% url 'dish:home' %}" role="search">
+        <div class="form-floating mb-3">
+          <input id="q" autofocus name="q" type="search" class="form-control" placeholder="Search"
+            value="{{ request.GET.q }}" />
+          <label for="q">Search</label>
+          <div class="form-text">
+            hit <kbd>RETURN</kbd> to search
+          </div>
+        </div>
+      </form>
+    </div>
+  {% else %}
+    <div class="col-sm-12 col-md-12 col-lg-8 offset-lg-2">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title pb-3">{{ restaurant.name }}<small>#{{ restaurant.res_id }}</small></h3>
+          <p class="card-text">
+            <span class="badge {% if restaurant.online %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+              {% if restaurant.online %}online{% else %}unavailable{% endif %}
+            </span>
+            Find us at <a href="{{ restaurant.get_google_maps_url }}" target="_blank">
+              {{ restaurant.address }}</a>!
+            <br />
+            <!-- show rating stars-->
+            {% for i in 1|loop:5 %}
+              {% if i <= restaurant.rating %}
+                <i class="bi bi-star-fill text-warning"></i>
+              {% else %}
+                <i class="bi bi-star text-warning"></i>
+              {% endif %}
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+    <br />
+    </div>
+  {% endif %}
+
+  <div class="col-sm-12 col-md-12 col-lg-8 offset-lg-2">
+    <div class="list-group">
+      {% for dish in dishes %}
+        <div href="{% url 'dish:detail' dish.pk %}" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">
+              <a style="text-decoration: none;" href="{{ dish.get_absolute_url }}">{{ dish.name }}</a>
+            </h5>
+            <small class="text-body-secondary">
+              <span class="badge {% if dish.restaurant.online %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+                {% if dish.restaurant.online %}online{% else %}unavailable{% endif %}
+              </span>
+            </small>
+          </div>
+          <p class="mb-1">
+            By <a style="text-decoration: none;" href="{% url 'restaurant:list' dish.restaurant_id %}">{{ dish.restaurant.name }}</a>
+          </p>
+          <small class="text-body-secondary">₹{{ dish.price }} {% if dish.onwards_tag %}+{% endif %} </small>
+        </div>
+      {% empty %}
+        {% if request.GET.q %}
+          <div class="list-group-item">
+            <p class="my-2 text-center">
+              No dishes found for "{{ request.GET.q }}".
+            </p>
+          </div>
+        {% else %}
+          <div class="list-group-item">
+            <p class="my-2 text-center">
+              Search for dishes from the search bar above.
+            </p>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-md-12 col-lg-8 offset-lg-2">
+    <ul class="pagination justify-content-center mt-2 mb-4">
+
+      {% get_proper_elided_page_range paginator page_obj.number as page_range %}
+
+      {% if page_obj.has_next or page_obj.has_previous %}
+
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}" class="page-link"
+              aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% for page_number in page_range %}
+
+          {% if page_number == page_obj.number %}
+
+            <li class="page-item">
+              <a class="page-link active">{{ page_number }}</a>
+            </li>
+
+            {% else %}
+    
+              {% if page_number == paginator.ELLIPSIS %}
+                <li class="page-item disabled"><a class="page-link">{{ page_number }}</a></li>
+      
+              {% else %}
+                <li class="page-item">
+                  <a href="?page={{ page_number }}&q={{ request.GET.q }}" class="page-link">{{ page_number }}</a>
+                </li>
+      
+              {% endif %}
+
+          {% endif %}
+
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}" class="page-link" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        {% endif %}
+
+      {% endif %}
+    </ul>
+
+  </div>
+
+</div>
+
+{% endblock body %}
