@@ -1,6 +1,6 @@
 # DishSearch
 
-A simple Django webapp to search for dishes from different restaurants. There is not fancy REST API or anything, it uses
+A simple Django webapp to search for dishes from different restaurants. There is no fancy REST API or anything, it uses
 good old Django templating for the frontend and plain Sqlite3 for the database.
 
 ## Demo
@@ -43,7 +43,7 @@ $ pip install -r requirements.txt
 
 ### Populate Database (optional)
 
-If you wish to use the provided, Sqlite3 database, you can skip the next step. Or if you wish to populate the database
+If you wish to use the provided sqlite3 database, you can skip the next step. Or if you wish to populate the database
 fresh with the provided `restaurants_small.csv` file, you can run the custom management command [`loadres`](restaurant/management/commands/loadres.py).
 
 **Note - this might take some time.**
