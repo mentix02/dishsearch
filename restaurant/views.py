@@ -3,12 +3,13 @@ from typing import Any, Dict
 from django.views.generic import ListView
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from dish.models import Dish
 from restaurant.models import Restaurant
 
 
-class RestaurantDishListView(ListView):
+class RestaurantDishListView(LoginRequiredMixin, ListView):
     model = Dish
     paginate_by = 10
     context_object_name = "dishes"

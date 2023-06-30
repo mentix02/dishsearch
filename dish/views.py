@@ -2,11 +2,12 @@ from typing import Optional
 
 from django.db.models.query import QuerySet
 from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from dish.models import Dish
 
 
-class HomeView(ListView):
+class HomeView(LoginRequiredMixin, ListView):
     model = Dish
     paginate_by = 10
     context_object_name = "dishes"
@@ -19,7 +20,7 @@ class HomeView(ListView):
         return Dish.objects.none()
 
 
-class DishDetailView(DetailView):
+class DishDetailView(LoginRequiredMixin, DetailView):
     model = Dish
     pk_url_kwarg = "dish_id"
     context_object_name = "dish"

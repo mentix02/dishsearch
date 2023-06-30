@@ -18,6 +18,7 @@ DEFAULT_APPS = [
 ]
 
 LOCAL_APPS = [
+    "user.apps.UserConfig",
     "dish.apps.DishConfig",
     "restaurant.apps.RestaurantConfig",
 ]
@@ -60,6 +61,10 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+AUTH_USER_MODEL = 'user.User'
+
+LOGIN_URL = 'user:login'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
